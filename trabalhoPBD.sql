@@ -3,7 +3,7 @@ DROP DATABASE IF EXISTS clinica_exames;
 CREATE DATABASE clinica_exames;
 USE clinica_exames;
 
--- CRIAÇÃO DAS TABELAS NA ORDEM CORRETA
+-- CRIAÇÃO DAS TABELAS 
 CREATE TABLE Empresa (
     id_empresa INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(255) NOT NULL,
@@ -29,7 +29,7 @@ CREATE TABLE Exame (
     descricao TEXT,
     requisitos TEXT,
     tempo_estimado INT NOT NULL,
-    tipo VARCHAR(20) CHECK (tipo IN ('LABORATORIAL', 'IMAGEM', 'CLINICO')),
+    tipo VARCHAR(20),
     tempo_coleta_analise INT,
     restricoes_alimentares TEXT,
     tecnologia_utilizada VARCHAR(100),
@@ -42,7 +42,7 @@ CREATE TABLE Exame (
 -- PACIENTE DEVE VIR DEPOIS DE EMPRESA
 CREATE TABLE Paciente (
     id_paciente INT AUTO_INCREMENT PRIMARY KEY,
-    id_empresa INT,  -- INT mesmo tipo que id_empresa na Empresa
+    id_empresa INT,
     nome VARCHAR(255) NOT NULL,
     endereco TEXT NOT NULL,
     telefone VARCHAR(15) NOT NULL,
@@ -69,7 +69,7 @@ CREATE TABLE Agendamento (
     id_unidade INT NOT NULL,
     id_profissional INT,
     data_hora DATETIME NOT NULL,
-    status VARCHAR(20) DEFAULT 'AGENDADO' CHECK (status IN ('AGENDADO', 'REALIZADO', 'CANCELADO')),
+    status VARCHAR(20) DEFAULT 'AGENDADO',
     documentos_ok BOOLEAN DEFAULT false,
     requisitos_ok BOOLEAN DEFAULT false,
     FOREIGN KEY (id_paciente) REFERENCES Paciente(id_paciente) ON DELETE CASCADE,
@@ -153,86 +153,58 @@ INSERT INTO Transferencia (id_exame, id_unidade_origem, id_unidade_destino, data
 (1, 3, 1, '2024-07-20', 'Aumento de demanda na região'),
 (4, 2, 3, '2024-07-22', 'Manutenção de equipamento');
 
--- CONSULTAS (6 no total, todas com junções)
--- 1. Pacientes e seus exames agendados
-SELECT 
-    p.nome AS paciente,
-    e.nome AS exame,
-    a.data_hora AS agendamento,
-    u.endereco AS unidade
+-- CONSULTAS
+-- 1. Pacientes e exames agendados
+SELECT p.nome AS paciente, e.nome AS exame, a.data_hora, u.endereco AS unidade
 FROM Agendamento a
 JOIN Paciente p ON a.id_paciente = p.id_paciente
 JOIN Exame e ON a.id_exame = e.id_exame
 JOIN Unidade u ON a.id_unidade = u.id_unidade;
 
 -- 2. Exames realizados com resultados
-SELECT 
-    p.nome AS paciente,
-    e.nome AS exame,
-    a.data_hora AS realizacao,
-    r.resultados,
-    r.recomendacoes
+SELECT p.nome AS paciente, e.nome AS exame, a.data_hora, r.resultados, r.recomendacoes
 FROM Agendamento a
 JOIN Resultado r ON a.id_agendamento = r.id_agendamento
 JOIN Paciente p ON a.id_paciente = p.id_paciente
 JOIN Exame e ON a.id_exame = e.id_exame
 WHERE a.status = 'REALIZADO';
 
--- 3. Disponibilidade de exames por unidade
-SELECT 
-    e.nome AS exame,
-    u.endereco AS unidade,
-    d.data AS data_disponivel
+-- 3. Disponibilidade de exames
+SELECT e.nome AS exame, u.endereco AS unidade, d.data
 FROM Disponibilidade d
 JOIN Exame e ON d.id_exame = e.id_exame
 JOIN Unidade u ON d.id_unidade = u.id_unidade
 WHERE d.data BETWEEN '2024-07-25' AND '2024-07-30';
 
--- 4. Transferências de exames entre unidades
-SELECT 
-    e.nome AS exame,
-    uo.endereco AS origem,
-    ud.endereco AS destino,
-    t.data_transferencia,
-    t.motivo
+-- 4. Transferências entre unidades
+SELECT e.nome AS exame, uo.endereco AS origem, ud.endereco AS destino, t.data_transferencia, t.motivo
 FROM Transferencia t
 JOIN Exame e ON t.id_exame = e.id_exame
 JOIN Unidade uo ON t.id_unidade_origem = uo.id_unidade
 JOIN Unidade ud ON t.id_unidade_destino = ud.id_unidade;
 
 -- 5. Pacientes vinculados a empresas
-SELECT 
-    emp.nome AS empresa,
-    p.nome AS paciente,
-    p.cpf,
-    p.data_nasc
+SELECT emp.nome AS empresa, p.nome AS paciente, p.cpf, p.data_nasc
 FROM Paciente p
 JOIN Empresa emp ON p.id_empresa = emp.id_empresa;
 
--- 6. Profissionais e seus exames agendados
-SELECT 
-    pr.nome AS profissional,
-    e.nome AS exame,
-    COUNT(a.id_agendamento) AS total_agendamentos
+-- 6. Agendamentos por profissional
+SELECT pr.nome AS profissional, e.nome AS exame, COUNT(a.id_agendamento) AS total
 FROM Agendamento a
 JOIN Profissional pr ON a.id_profissional = pr.id_profissional
 JOIN Exame e ON a.id_exame = e.id_exame
 GROUP BY pr.nome, e.nome;
 
--- PROCESSAMENTO ATIVO: GATILHO PARA VERIFICAÇÃO DE REQUISITO
+-- GATILHO PARA VERIFICAÇÃO DE REQUISITOS
 DELIMITER $$
 
-CREATE TRIGGER tg_atualiza_status_exame
+CREATE TRIGGER tg_verifica_requisitos
 BEFORE UPDATE ON Agendamento
 FOR EACH ROW
 BEGIN
-    -- Verificar se está tentando atualizar para REALIZADO
-    IF NEW.status = 'REALIZADO' THEN
-        -- Verificar se os requisitos foram atendidos
-        IF NEW.documentos_ok = false OR NEW.requisitos_ok = false THEN
-            SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'Exame não pode ser marcado como realizado: requisitos ou documentos pendentes';
-        END IF;
+    IF NEW.status = 'REALIZADO' AND (NEW.documentos_ok = 0 OR NEW.requisitos_ok = 0) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Documentos e/ou requisitos não atendidos';
     END IF;
 END$$
 
@@ -256,3 +228,30 @@ JOIN Exame e ON a.id_exame = e.id_exame
 JOIN Unidade u ON a.id_unidade = u.id_unidade
 WHERE a.status = 'AGENDADO'
 AND a.data_hora BETWEEN NOW() AND DATE_ADD(NOW(), INTERVAL 7 DAY);
+
+-- TESTES
+-- Marcar requisitos como atendidos
+UPDATE Agendamento SET documentos_ok = 1, requisitos_ok = 1 WHERE id_agendamento = 1;
+
+-- Atualizar status para realizado (deve funcionar)
+UPDATE Agendamento SET status = 'REALIZADO' WHERE id_agendamento = 1;
+
+-- EXECUTAR AS CONSULTAS APÓS ATUALIZAR O STATUS
+-- CONSULTAS
+-- 1. Pacientes e exames agendados
+SELECT p.nome AS paciente, e.nome AS exame, a.data_hora, u.endereco AS unidade
+FROM Agendamento a
+JOIN Paciente p ON a.id_paciente = p.id_paciente
+JOIN Exame e ON a.id_exame = e.id_exame
+JOIN Unidade u ON a.id_unidade = u.id_unidade;
+
+-- 2. Exames realizados com resultados (AGORA COM DADOS)
+SELECT p.nome AS paciente, e.nome AS exame, a.data_hora, r.resultados, r.recomendacoes
+FROM Agendamento a
+JOIN Resultado r ON a.id_agendamento = r.id_agendamento
+JOIN Paciente p ON a.id_paciente = p.id_paciente
+JOIN Exame e ON a.id_exame = e.id_exame
+WHERE a.status = 'REALIZADO';
+
+-- Tentar atualizar sem requisitos (deve falhar)
+UPDATE Agendamento SET status = 'REALIZADO' WHERE id_agendamento = 2;
