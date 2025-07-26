@@ -1,0 +1,148 @@
+📋 GUIA RÁPIDO DE USO
+===================
+
+🚀 INSTALAÇÃO RÁPIDA
+--------------------
+
+1. Execute setup.bat (Windows) ou:
+   ```
+   pip install mysql-connector-python ttkbootstrap
+   ```
+
+2. Configure o MySQL:
+   ```
+   mysql -u root -p < trabalhoPBD.sql
+   ```
+
+3. Execute o sistema:
+   ```
+   python main.py
+   ```
+
+🔧 CONFIGURAÇÃO
+---------------
+
+Na primeira execução, configure:
+- Host: localhost
+- Database: clinica_exames  
+- Usuário: root
+- Senha: sua_senha_mysql
+
+💡 EXEMPLOS DE USO
+------------------
+
+🧪 TESTAR SISTEMA:
+```
+python exemplo_uso.py
+```
+
+📖 VER DEMONSTRAÇÃO:
+```  
+python demonstracao.py
+```
+
+🖥️ EXECUTAR INTERFACE:
+```
+python main.py
+```
+
+🏥 FUNCIONALIDADES PRINCIPAIS
+-----------------------------
+
+👥 PACIENTES:
+- Cadastro completo com dados pessoais
+- Vinculação opcional com empresas
+- Edição e exclusão de registros
+- Validação de CPF único
+
+🔬 EXAMES:
+- Três tipos: LABORATORIAL, IMAGEM, CLÍNICO
+- Campos específicos por tipo
+- Tempo estimado e requisitos
+- Preparos e restrições especiais
+
+📅 AGENDAMENTOS:
+- Seleção de paciente, exame, unidade
+- Controle de status (AGENDADO/REALIZADO/CANCELADO)
+- Validação de documentos e requisitos
+- Vinculação opcional com profissional
+
+📋 RESULTADOS:
+- Apenas para exames REALIZADOS
+- Resultados detalhados
+- Recomendações médicas
+- Histórico completo
+
+📊 RELATÓRIOS:
+- Exames próximos com priorização
+- Estatísticas por profissional
+- Pacientes vinculados a empresas
+- Interface em tempo real
+
+🔍 ESTRUTURA DO BANCO
+---------------------
+
+PRINCIPAIS TABELAS:
+- Empresa (empresas parceiras)
+- Paciente (dados pessoais) 
+- Exame (catálogo de exames)
+- Unidade (locais de atendimento)
+- Profissional (médicos/técnicos)
+- Agendamento (agendamentos realizados)
+- Resultado (resultados de exames)
+- Disponibilidade (disponibilidade por unidade)
+
+RECURSOS AVANÇADOS:
+- Gatilhos para validação automática
+- View para exames próximos
+- Relacionamentos com integridade referencial
+- Campos opcionais por tipo de exame
+
+🐛 RESOLUÇÃO DE PROBLEMAS
+-------------------------
+
+❌ Erro de conexão:
+   - Verifique se MySQL está rodando
+   - Configure corretamente via interface
+   - Teste com: python exemplo_uso.py
+
+❌ ttkbootstrap não encontrado:
+   - pip install ttkbootstrap
+   - Ou use interface simplificada
+
+❌ Banco não encontrado:
+   - Execute: mysql -u root -p < trabalhoPBD.sql
+   - Verifique nome do banco: clinica_exames
+
+❌ Erro de dependências:
+   - pip install -r requirements.txt
+   - Ou execute setup.bat
+
+🔒 VALIDAÇÕES IMPLEMENTADAS
+---------------------------
+
+✅ CPF único por paciente
+✅ Formatos de data válidos
+✅ Campos obrigatórios
+✅ Status só muda para REALIZADO com validações OK
+✅ Resultados só para exames realizados
+✅ Integridade referencial no banco
+
+📞 SUPORTE
+----------
+
+1. Leia o README.md completo
+2. Execute exemplo_uso.py para diagnósticos
+3. Verifique se todas as dependências estão instaladas
+4. Confirme que o MySQL está rodando e configurado
+
+🎯 PRÓXIMOS PASSOS
+-----------------
+
+Para expandir o sistema, considere:
+- Backup/Restore automático
+- Exportação de relatórios (PDF/Excel)  
+- Calendário visual para agendamentos
+- Notificações automáticas
+- Dashboard com gráficos
+- API REST para integração
