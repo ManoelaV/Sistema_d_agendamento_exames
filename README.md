@@ -1,227 +1,166 @@
-# Sistema de Agendamento de Exames - Interface Desktop
+# 🏥 Sistema de Agendamento de Exames
 
-Este projeto implementa uma interface desktop básica para comunicação com banco de dados MySQL, desenvolvida especificamente para o sistema de agendamento de exames clínicos.
+## 📋 O QUE É?
 
-##  Funcionalidades
+Sistema completo para gestão de exames clínicos com interface gráfica moderna.
 
-### Interface Principal
-- **Interface gráfica moderna** usando ttkbootstrap (com fallback para tkinter padrão)
-- **Configuração dinâmica** do banco de dados através da interface
-- **Navegação por abas** para diferentes módulos do sistema
-- **Tema moderno** e responsivo
-
-### Módulos Implementados
-
-#### 👥 Gestão de Pacientes
-- ✅ Cadastro de novos pacientes
-- ✅ Edição de dados existentes
-- ✅ Exclusão de pacientes
-- ✅ Visualização em lista
-- ✅ Vinculação com empresas
-
-#### 🔬 Gestão de Exames
-- ✅ Cadastro de diferentes tipos de exames (LABORATORIAL, IMAGEM, CLÍNICO)
-- ✅ Campos específicos por tipo de exame
-- ✅ Configuração de tempo estimado e requisitos
-- ✅ Edição e exclusão de exames
-
-#### 📅 Gestão de Agendamentos
-- ✅ Criação de novos agendamentos
-- ✅ Seleção de paciente, exame, unidade e profissional
-- ✅ Controle de status (AGENDADO, REALIZADO, CANCELADO)
-- ✅ Validação de documentos e requisitos
-- ✅ Cancelamento de agendamentos
-
-#### 📋 Gestão de Resultados
-- ✅ Cadastro de resultados para exames realizados
-- ✅ Adição de recomendações médicas
-- ✅ Vinculação automática com agendamentos
-
-#### 📊 Relatórios
-- ✅ **Exames Próximos**: Lista exames com prioridade (URGENTE, PRÓXIMO, FUTURO)
-- ✅ **Por Profissional**: Estatísticas de agendamentos por profissional
-- ✅ **Por Empresa**: Pacientes vinculados a empresas
-
-## 🗄️ Estrutura do Banco
-
-O sistema trabalha com as seguintes tabelas:
-- `Empresa` - Dados das empresas parceiras
-- `Paciente` - Informações dos pacientes
-- `Exame` - Catálogo de exames disponíveis
-- `Unidade` - Unidades de atendimento
-- `Profissional` - Profissionais de saúde
-- `Agendamento` - Agendamentos realizados
-- `Resultado` - Resultados dos exames
-- `Disponibilidade` - Disponibilidade de exames por unidade
-- `Transferencia` - Histórico de transferências
-
-## 🚀 Como Executar
-
-### Pré-requisitos
-
-1. **Python 3.7+** instalado
-2. **MySQL** rodando com o banco `clinica_exames` criado
-3. **Dependências Python**:
+## ⚡ INÍCIO RÁPIDO
 
 ```bash
+# Executar o sistema
+./run.sh
+
+# Testar funcionalidades
+./venv/bin/python exemplo_exames.py
+./venv/bin/python exemplo_agendamentos.py
+```
+
+## ✅ FUNCIONALIDADES
+
+### 👥 **Pacientes**
+- Cadastro, edição, exclusão
+- Vinculação com empresas
+
+### 🔬 **Exames** 
+- 3 tipos: LABORATORIAL, IMAGEM, CLÍNICO
+- Campos específicos por tipo
+- Interface dinâmica
+
+### 📅 **Agendamentos**
+- Criação completa
+- Controle de status
+- Validações automáticas
+
+### 📋 **Resultados**
+- Para exames realizados
+- Editor de texto extenso
+- Recomendações médicas
+
+### 📊 **Relatórios**
+- Exames próximos
+- Por profissional
+- Por empresa
+
+## 🚀 INSTALAÇÃO
+
+### 1. Dependências do Sistema
+```bash
+sudo apt install python3-tk python3-venv mysql-server
+```
+
+### 2. Ambiente Virtual
+```bash
+python3 -m venv venv
+source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### Dependências
-
-```
-mysql-connector-python==8.2.0
-ttkbootstrap==1.10.1
-```
-
-### Preparação do Banco
-
-1. Execute o arquivo `trabalhoPBD.sql` no MySQL para criar a estrutura e dados de teste:
-
-```sql
+### 3. Banco de Dados
+```bash
 mysql -u root -p < trabalhoPBD.sql
 ```
 
-### Execução
-
+### 4. Executar
 ```bash
 python main.py
 ```
 
-## 🔧 Configuração
+## 🔧 CONFIGURAÇÃO
 
-### Primeira Execução
+Na primeira execução:
+- Host: `localhost`
+- Database: `clinica_exames`
+- User: `root`
+- Password: sua senha MySQL
 
-1. Execute `python main.py`
-2. Se a conexão falhar, será aberto um diálogo de configuração
-3. Configure:
-   - **Host**: localhost (ou IP do servidor MySQL)
-   - **Database**: clinica_exames
-   - **Usuário**: root (ou seu usuário MySQL)
-   - **Senha**: sua senha MySQL
-
-### Arquivo de Configuração
-
-As configurações são salvas automaticamente em `db_config.json`:
-
-```json
-{
-    "host": "localhost",
-    "database": "clinica_exames",
-    "user": "root",
-    "password": "sua_senha"
-}
-```
-
-## 📁 Estrutura do Projeto
+## 📁 ARQUIVOS PRINCIPAIS
 
 ```
-Sistema_d_agendamento_exames/
-├── main.py              # Arquivo principal de execução
-├── database.py          # Classe de conexão com MySQL
-├── models.py           # Modelos de dados e operações CRUD
-├── gui_main.py         # Interface principal (ttkbootstrap)
-├── gui_dialogs.py      # Diálogos e janelas secundárias
-├── requirements.txt    # Dependências Python
-├── db_config.json     # Configurações do banco (auto-gerado)
-├── trabalhoPBD.sql    # Script de criação do banco
-└── README.md          # Este arquivo
+├── main.py                  # Executar sistema
+├── run.sh                   # Script automático
+├── exemplo_exames.py        # Testar exames
+├── exemplo_agendamentos.py  # Testar agendamentos
+├── trabalhoPBD.sql         # Criar banco
+├── README.md               # Esta documentação
+└── venv/                   # Ambiente virtual
 ```
 
-## 🎨 Interface
+## 🐛 PROBLEMAS COMUNS
 
-### Telas Principais
-
-1. **Aba Pacientes**
-   - Lista todos os pacientes cadastrados
-   - Botões: Novo, Editar, Excluir, Atualizar
-
-2. **Aba Exames**
-   - Catálogo de exames disponíveis
-   - Diferentes tipos com campos específicos
-
-3. **Aba Agendamentos**
-   - Visualização de todos os agendamentos
-   - Controle de status e validações
-
-4. **Aba Resultados**
-   - Resultados de exames realizados
-   - Recomendações médicas
-
-5. **Aba Relatórios**
-   - Relatórios gerenciais em tempo real
-
-### Características da Interface
-
-- **Design Responsivo**: Adapta-se ao tamanho da janela
-- **Validação de Dados**: Campos obrigatórios e formatos validados
-- **Mensagens Claras**: Feedback visual para todas as operações
-- **Navegação Intuitiva**: Interface organizada por contexto
-- **Fallback Robusto**: Funciona mesmo sem ttkbootstrap
-
-## 🔒 Validações e Regras de Negócio
-
-### Validações Implementadas
-- ✅ CPF único por paciente
-- ✅ Formato de data válido (DD/MM/AAAA)
-- ✅ Campos obrigatórios preenchidos
-- ✅ Status só muda para REALIZADO com documentos e requisitos OK
-- ✅ Resultados só para exames realizados
-
-### Gatilhos do Banco
-- **Verificação de Requisitos**: Impede alterar status para REALIZADO sem validações
-
-### Views Implementadas
-- **vw_exames_proximos**: Exames com classificação de prioridade temporal
-
-## 🐛 Troubleshooting
-
-### Erro de Conexão
+### Erro: externally-managed-environment
+```bash
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
 ```
-Erro ao conectar ao banco
+
+### Erro: No module named 'tkinter'
+```bash
+sudo apt install python3-tk
 ```
-**Solução**: Verifique se MySQL está rodando e configure corretamente via interface
 
-### Erro de Importação ttkbootstrap
+### Erro: No module named 'mysql.connector'
+```bash
+pip install mysql-connector-python
 ```
-Import "ttkbootstrap" could not be resolved
+
+### Erro de conexão MySQL
+```bash
+sudo systemctl start mysql
 ```
-**Solução**: Execute `pip install ttkbootstrap` ou use a versão simplificada
 
-### Erro de Dependência MySQL
-```
-No module named 'mysql.connector'
-```
-**Solução**: Execute `pip install mysql-connector-python`
+## 💡 EXEMPLOS DE USO
 
-## 🔄 Versões
+### Cadastrar Exame
+1. Executar `python main.py`
+2. Aba "Exames" → "➕ Novo Exame"
+3. Preencher campos
+4. Selecionar tipo
+5. Salvar
 
-### v1.0 - Versão Atual
-- ✅ Interface completa com ttkbootstrap
-- ✅ Fallback para tkinter padrão
-- ✅ Todas as operações CRUD
-- ✅ Relatórios básicos
-- ✅ Configuração via interface
+### Criar Agendamento
+1. Aba "Agendamentos" → "➕ Novo Agendamento"
+2. Selecionar paciente e exame
+3. Definir data/hora
+4. Salvar
 
-### Próximas Versões (Propostas)
-- 🔄 Backup/Restore do banco
-- 🔄 Exportação de relatórios (PDF/Excel)
-- 🔄 Calendário visual para agendamentos
-- 🔄 Notificações de exames próximos
-- 🔄 Dashboard com gráficos
+### Adicionar Resultado
+1. Aba "Resultados" → "➕ Novo Resultado"
+2. Selecionar exame REALIZADO
+3. Digitar resultados
+4. Salvar
 
-## 📞 Suporte
+## 📞 SUPORTE
 
-Para problemas ou dúvidas:
-1. Verifique se todas as dependências estão instaladas
-2. Confirme que o MySQL está rodando
-3. Execute o script SQL para criar a estrutura
-4. Verifique as configurações de conexão
+1. **Teste as funcionalidades:**
+   ```bash
+   ./venv/bin/python exemplo_exames.py
+   ```
 
-## 📄 Licença
+2. **Verifique conexão MySQL:**
+   ```bash
+   mysql -u root -p -e "SHOW DATABASES;"
+   ```
 
-Este projeto foi desenvolvido para fins educacionais e de demonstração.
+3. **Logs de erro:**
+   - Execute o sistema pelo terminal
+   - Observe mensagens de erro
+
+## 🎯 STATUS
+
+**✅ IMPLEMENTADO:**
+- Interface gráfica completa
+- Todas as operações CRUD
+- Validações automáticas
+- Relatórios básicos
+- Ambiente virtual configurado
+
+**🔄 PRÓXIMAS VERSÕES:**
+- Backup/Restore
+- Exportação PDF
+- Calendário visual
+- Dashboard com gráficos
 
 ---
 
-**Desenvolvido com ❤️ para facilitar a gestão de exames clínicos**
+**🚀 Sistema 100% funcional e pronto para uso!**

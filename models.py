@@ -257,6 +257,34 @@ class ClinicaModel:
         """
         return self.db.execute_query(query, fetch=True)
     
+    def get_agendamentos_realizados_sem_resultado(self):
+        """Retorna agendamentos realizados que não possuem resultado"""
+        query = """
+        SELECT a.id_agendamento, p.nome as paciente_nome, e.nome as exame_nome, a.data_hora
+        FROM Agendamento a
+        JOIN Paciente p ON a.id_paciente = p.id_paciente
+        JOIN Exame e ON a.id_exame = e.id_exame
+        WHERE a.status = 'REALIZADO' 
+        AND a.id_agendamento NOT IN (SELECT id_agendamento FROM Resultado)
+        ORDER BY a.data_hora DESC
+        """
+        return self.db.execute_query(query, fetch=True)
+    
+    def get_agendamento_by_id(self, id_agendamento):
+        """Retorna um agendamento específico com informações completas"""
+        query = """
+        SELECT a.*, p.nome as paciente_nome, e.nome as exame_nome, 
+               u.endereco as unidade_endereco, pr.nome as profissional_nome
+        FROM Agendamento a
+        JOIN Paciente p ON a.id_paciente = p.id_paciente
+        JOIN Exame e ON a.id_exame = e.id_exame
+        JOIN Unidade u ON a.id_unidade = u.id_unidade
+        LEFT JOIN Profissional pr ON a.id_profissional = pr.id_profissional
+        WHERE a.id_agendamento = %s
+        """
+        result = self.db.execute_query(query, (id_agendamento,), fetch=True)
+        return result[0] if result else None
+
     def test_connection(self):
         """Testa a conexão com o banco"""
         return self.db.test_connection()
