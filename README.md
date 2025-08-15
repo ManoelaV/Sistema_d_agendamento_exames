@@ -10,9 +10,6 @@ Sistema completo para gestão de exames clínicos com interface gráfica moderna
 # Executar o sistema
 ./run.sh
 
-# Testar funcionalidades
-./venv/bin/python exemplo_exames.py
-./venv/bin/python exemplo_agendamentos.py
 ```
 
 ## ✅ FUNCIONALIDADES
