@@ -5,10 +5,11 @@ import os
 
 class DatabaseConnection:
     def __init__(self):
-        self.connection = None
-        self.config_file = 'db_config.json'
-        self.load_config()
-    
+        self.connection = None # Conexão com o banco de dados
+        self.config_file = 'db_config.json' # Caminho para o arquivo de configuração
+        self.load_config() # Carrega a configuração do banco de dados
+
+    # Carrega a configuração do banco de dados do arquivo JSON
     def load_config(self):
         """Carrega a configuração do banco de dados do arquivo JSON"""
         default_config = {
@@ -17,8 +18,7 @@ class DatabaseConnection:
             "user": "root",
             "password": ""
         }
-        
-        if os.path.exists(self.config_file):
+        if os.path.exists(self.config_file):  # Verifica se o arquivo de configuração existe
             try:
                 with open(self.config_file, 'r') as f:
                     self.config = json.load(f)
